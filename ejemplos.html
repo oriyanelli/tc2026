@@ -361,6 +361,31 @@
       </div>
     </div>
   </div>
+  <!-- ====== LAZO ABIERTO ====== -->
+  <div id="sec-ab" class="sec">
+    <div class="section-banner banner-ab">
+      <div class="banner-icon">🔓</div>
+      <div>
+        <div class="banner-title">Sistemas de Lazo Abierto</div>
+        <div class="banner-desc">La señal de salida <strong>no realimenta</strong> al controlador. El sistema actúa según una consigna fija (tiempo, posición, potencia) sin verificar si el resultado fue el esperado. En presencia de perturbaciones, el error no se corrige automáticamente.</div>
+        <span class="banner-key">Sin sensor · Sin comparador · Sin retroalimentación</span>
+      </div>
+    </div>
+    <div class="grid" id="grid-ab-solo"></div>
+  </div>
+
+  <!-- ====== LAZO CERRADO ====== -->
+  <div id="sec-ce" class="sec">
+    <div class="section-banner banner-ce">
+      <div class="banner-icon">🔁</div>
+      <div>
+        <div class="banner-title">Sistemas de Lazo Cerrado</div>
+        <div class="banner-desc">La señal de salida <strong>realimenta</strong> al controlador. El sensor capta la variable controlada, el comparador detecta el error respecto a la referencia y el controlador corrige la acción. Ante perturbaciones, el sistema se autoregula.</div>
+        <span class="banner-key">Con sensor · Con comparador · Con retroalimentación negativa</span>
+      </div>
+    </div>
+    <div class="grid" id="grid-ce-solo"></div>
+  </div>
 
   <!-- ====== COMPARISON ====== -->
   <div id="sec-comp" class="sec">
