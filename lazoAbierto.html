@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagramas de Flujo — Lazo Abierto</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & base ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --teal:    #0F6E56; --teal-l:  #E1F5EE; --teal-m:  #1D9E75;
+  --purple:  #534AB7; --purple-l:#EEEDFE; --purple-m:#7F77DD;
+  --amber:   #BA7517; --amber-l: #FAEEDA; --amber-m: #EF9F27;
+  --coral:   #993C1D; --coral-l: #FAECE7; --coral-m: #D85A30;
+  --blue:    #185FA5; --blue-l:  #E6F1FB; --blue-m:  #378ADD;
+  --green:   #3B6D11; --green-l: #EAF3DE; --green-m: #639922;
+  --red:     #A32D2D; --red-l:   #FCEBEB; --red-m:   #E24B4A;
+  --gray:    #5F5E5A; --gray-l:  #F1EFE8; --gray-m:  #888780;
+  --dark:    #1c1b18;
+  --text:    #2C2C2A;
+  --muted:   #5F5E5A;
+  --border:  #D3D1C7;
+  --bg:      #FAFAF7;
+  --white:   #ffffff;
+  --radius:  10px;
+  --shadow:  0 4px 24px rgba(0,0,0,.08);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── Nav ──────────────────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--dark);
+  display: flex; align-items: center; gap: 0;
+  padding: 0 32px;
+  box-shadow: 0 2px 16px rgba(0,0,0,.25);
+}
+.nav-brand {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 15px;
+  color: #fff; letter-spacing: -.3px;
+  padding: 16px 24px 16px 0;
+  border-right: 1px solid rgba(255,255,255,.12);
+  margin-right: 16px;
+  white-space: nowrap;
+}
+.nav-links { display: flex; gap: 0; flex: 1; }
+.nav-links a {
+  color: rgba(255,255,255,.6);
+  text-decoration: none;
+  font-size: 13px; font-weight: 500;
+  padding: 18px 16px;
+  transition: color .2s, background .2s;
+  border-bottom: 2px solid transparent;
+}
+.nav-links a:hover { color: #fff; }
+.nav-links a.active { color: #fff; border-bottom-color: var(--teal-m); }
+.nav-pill {
+  margin-left: auto;
+  background: var(--teal); color: #fff;
+  font-size: 11px; font-weight: 600;
+  padding: 4px 10px; border-radius: 20px;
+  letter-spacing: .5px;
+}
+
+/* ── Hero section ─────────────────────────────────────────── */
+#seccion-1 {
+  min-height: 100vh;
+  background: var(--dark);
+  display: grid; grid-template-rows: auto 1fr;
+  position: relative; overflow: hidden;
+}
+.hero-decor {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 60% 50% at 70% 40%, rgba(29,158,117,.12) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 60% at 20% 80%, rgba(83,74,183,.1) 0%, transparent 60%);
+}
+.hero-inner {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 80px 64px;
+  gap: 40px;
+  position: relative; z-index: 1;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 600; letter-spacing: 2px;
+  color: var(--teal-m); text-transform: uppercase;
+}
+.hero-eyebrow span { width: 24px; height: 1px; background: var(--teal-m); display: block; }
+h1.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(36px, 6vw, 68px);
+  font-weight: 800; line-height: 1.05;
+  color: #fff; letter-spacing: -2px;
+}
+h1.hero-title em { font-style: normal; color: var(--teal-m); }
+.hero-sub {
+  font-size: 16px; color: rgba(255,255,255,.55);
+  max-width: 520px; font-weight: 300; line-height: 1.7;
+}
+.hero-cards {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px; max-width: 680px;
+}
+.hero-card {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--radius);
+  padding: 20px;
+  cursor: pointer;
+  transition: background .2s, border-color .2s, transform .15s;
+  text-decoration: none;
+}
+.hero-card:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.2); transform: translateY(-2px); }
+.hero-card-num { font-size: 11px; font-weight: 600; letter-spacing: 2px; color: var(--gray-m); margin-bottom: 8px; }
+.hero-card-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.hero-card-desc { font-size: 12px; color: rgba(255,255,255,.45); }
+
+/* ── Section wrapper ──────────────────────────────────────── */
+.section {
+  padding: 100px 64px;
+  min-height: 100vh;
+  position: relative;
+}
+.section-header {
+  margin-bottom: 56px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.section-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.section-tag .dot { width: 6px; height: 6px; border-radius: 50%; }
+h2.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800; letter-spacing: -1.5px;
+  line-height: 1.1; color: var(--dark);
+}
+.section-desc { font-size: 15px; color: var(--muted); max-width: 560px; }
+
+/* ── Section 2 — Simbología ───────────────────────────────── */
+#seccion-2 { background: var(--white); }
+
+.sym-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+.sym-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  display: flex; align-items: center; gap: 20px;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s, border-color .2s;
+  background: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+.sym-card::before {
+  content: ''; position: absolute; inset: 0; opacity: 0;
+  transition: opacity .2s;
+}
+.sym-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.sym-card:hover::before { opacity: 1; }
+.sym-card:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+
+.sym-icon-wrap {
+  width: 64px; height: 64px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+}
+.sym-info { flex: 1; }
+.sym-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700; font-size: 14px; color: var(--dark);
+  margin-bottom: 4px;
+}
+.sym-brief { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.sym-badge {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+  padding: 3px 8px; border-radius: 20px;
+  text-transform: uppercase; margin-top: 8px; display: inline-block;
+}
+.sym-more {
+  position: absolute; right: 16px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px; color: var(--border);
+  transition: color .2s;
+}
+.sym-card:hover .sym-more { color: var(--muted); }
+
+/* ── Rule banner ──────────────────────────────────────────── */
+.rule-banner {
+  margin-top: 32px;
+  padding: 20px 28px;
+  background: var(--amber-l);
+  border: 1px solid var(--amber-m);
+  border-radius: var(--radius);
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.rule-icon { font-size: 22px; margin-top: 2px; flex-shrink: 0; }
+.rule-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; color: var(--amber); margin-bottom: 4px; }
+.rule-text { font-size: 13px; color: var(--text); }
+
+/* ── Section 3 — Lazo abierto concepto ───────────────────── */
+#seccion-3 { background: var(--gray-l); }
+
+.concept-block {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 48px;
+}
+.concept-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px;
+}
+.concept-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+}
+.concept-card h3 {
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px;
+  color: var(--dark); margin-bottom: 10px;
+}
+.concept-card p { font-size: 13.5px; color: var(--muted); line-height: 1.65; }
+
+/* schema diagram */
+.schema-wrap {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px;
+  margin-bottom: 48px;
+}
+.schema-label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
+.schema-boxes {
+  display: flex; align-items: center; gap: 0;
+  flex-wrap: wrap; gap: 8px;
+}
+.schema-box {
+  padding: 10px 18px; border-radius: 8px;
+  font-size: 13px; font-weight: 600;
+  border: 1px solid; text-align: center; flex: 1;
+  cursor: pointer; transition: transform .15s;
+  min-width: 100px;
+}
+.schema-box:hover { transform: scale(1.04); }
+.schema-arrow { font-size: 20px; color: var(--muted); flex-shrink: 0; }
+.schema-note {
+  margin-top: 14px; font-size: 12px; color: var(--muted);
+  display: flex; align-items: center; gap: 6px;
+}
+.schema-note::before { content: ''; display: block; width: 28px; height: 1px; background: var(--coral-m); }
+
+/* ── Section 4 — Ejemplos ────────────────────────────────── */
+#seccion-4 { background: var(--white); }
+
+.examples-tabs {
+  display: flex; gap: 8px; margin-bottom: 36px; flex-wrap: wrap;
+}
+.ex-tab {
+  background: none; border: 1px solid var(--border);
+  border-radius: 30px; padding: 8px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: all .15s; color: var(--muted);
+}
+.ex-tab.active {
+  background: var(--dark); color: #fff; border-color: var(--dark);
+}
+.ex-tab:hover:not(.active) { border-color: var(--gray); color: var(--text); }
+
+.example-panel { display: none; }
+.example-panel.active { display: grid; grid-template-columns: 1fr 340px; gap: 32px; align-items: start; }
+
+.flow-container {
+  background: var(--gray-l); border-radius: var(--radius);
+  border: 1px solid var(--border); padding: 32px;
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+}
+.flow-title {
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px;
+  color: var(--dark); margin-bottom: 24px; text-align: center;
+}
+
+/* Flowchart nodes */
+.f-oval {
+  padding: 10px 36px; border-radius: 50px;
+  font-weight: 700; font-size: 13px; text-align: center;
+  cursor: pointer; transition: transform .15s, box-shadow .15s;
+  border: 1.5px solid;
+}
+.f-oval:hover { transform: scale(1.04); box-shadow: 0 4px 14px rgba(0,0,0,.1); }
+
+.f-rect {
+  width: 100%; max-width: 280px;
+  padding: 11px 18px; border-radius: 8px;
+  font-size: 13px; font-weight: 500; text-align: center;
+  cursor: pointer; transition: transform .15s, box-shadow .15s;
+  border: 1.5px solid;
+}
+.f-rect:hover { transform: scale(1.02); box-shadow: 0 4px 14px rgba(0,0,0,.1); }
+
+.f-arrow {
+  display: flex; flex-direction: column; align-items: center;
+  margin: 2px 0; color: var(--muted);
+}
+.f-arrow svg { display: block; }
+
+/* side info panel */
+.side-panel {
+  position: sticky; top: 80px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.info-card {
+  background: var(--gray-l); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+}
+.info-card-title {
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px;
+  color: var(--dark); margin-bottom: 10px;
+}
+.info-tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 20px; margin-bottom: 10px;
+}
+.step-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.step-list li {
+  display: flex; gap: 10px; align-items: flex-start;
+  font-size: 12.5px; color: var(--muted);
+}
+.step-num {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--dark); color: #fff;
+  font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+
+/* ── Modal ────────────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(28,27,24,.7);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s;
+}
+.modal-backdrop.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--white); border-radius: 16px;
+  padding: 36px; max-width: 480px; width: 90%;
+  transform: translateY(20px) scale(.97);
+  transition: transform .25s cubic-bezier(.22,.97,.44,1.1);
+  box-shadow: 0 24px 64px rgba(0,0,0,.2);
+  position: relative;
+}
+.modal-backdrop.open .modal { transform: translateY(0) scale(1); }
+.modal-close {
+  position: absolute; top: 16px; right: 16px;
+  background: var(--gray-l); border: none; border-radius: 50%;
+  width: 32px; height: 32px; cursor: pointer;
+  font-size: 16px; display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.modal-close:hover { background: var(--border); }
+.modal-icon {
+  width: 72px; height: 72px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.modal-tag {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.modal-title {
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px;
+  color: var(--dark); margin-bottom: 14px; line-height: 1.15;
+}
+.modal-desc { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 20px; }
+.modal-shape-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.modal-shape-box {
+  border-radius: 8px; padding: 14px 20px;
+  border: 1px dashed var(--border);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.modal-example {
+  padding: 14px 16px; border-radius: 8px;
+  font-size: 13px; line-height: 1.6;
+}
+.modal-example strong { font-weight: 600; }
+
+/* ── Footer ───────────────────────────────────────────────── */
+footer {
+  background: var(--dark); padding: 40px 64px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 16px;
+}
+.footer-brand {
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; color: #fff;
+}
+.footer-text { font-size: 12px; color: rgba(255,255,255,.35); }
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .section { padding: 64px 24px; }
+  .hero-inner { padding: 48px 24px; }
+  nav { padding: 0 16px; }
+  .nav-links a { padding: 16px 10px; font-size: 12px; }
+  .concept-block { grid-template-columns: 1fr; }
+  .example-panel.active { grid-template-columns: 1fr; }
+  .side-panel { position: static; }
+  footer { padding: 32px 24px; flex-direction: column; text-align: center; }
+}
+
+/* ── Scroll animations ────────────────────────────────────── */
+.fade-up {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity .5s, transform .5s;
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* ── Ajustes de Compatibilidad Responsive ────────────────── */
+
+/* 1. Asegura que el contenedor principal no desborde */
+.container {
+    width: 100% !important;
+    max-width: 1100px !important;
+    padding: 0 20px !important;
+}
+
+/* 2. Hace que las tarjetas de simbología se apilen en móviles */
+.sym-cards {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 20px !important;
+}
+
+.sym-card {
+    flex: 1 1 300px !important; /* Permite que crezcan pero no bajen de 300px */
+    max-width: 100% !important;
+    height: auto !important; /* Quita alturas fijas que cortan el texto */
+}
+
+/* 3. Ajusta la sección de ejemplos (tabs y contenido) */
+.example-content {
+    flex-direction: row; /* Por defecto horizontal */
+    display: flex !important;
+    gap: 20px !important;
+}
+
+@media (max-width: 850px) {
+    /* Si la pantalla es chica, ponemos la imagen arriba y el texto abajo */
+    .example-content {
+        flex-direction: column !important;
+    }
+    
+    .example-text, .example-img {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+
+    .ex-tabs {
+        justify-content: flex-start !important;
+        overflow-x: auto !important; /* Permite deslizar los botones si no caben */
+        padding-bottom: 10px;
+    }
+
+    h1 {
+        font-size: 2.8rem !important; /* Achica el título principal */
+    }
+}
+
+/* 4. Corrige imágenes para que no se estiren raro */
+img, .example-img {
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 200px;
+}
+
+/* 5. El Modal (si lo usas) */
+.modal-content {
+    width: 90% !important;
+    max-width: 500px !important;
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-brand">Tecnología del Control</div>
+  <div class="nav-links">
+    <a href="#seccion-2" id="nav-1">Simbología</a>
+    <a href="#seccion-3" id="nav-2">Lazo abierto</a>
+    <a href="#seccion-4" id="nav-3">Ejemplos</a>
+  </div>
+  <span class="nav-pill">TC -3° DYCP / 2026</span>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SECCIÓN 1 — HERO
+═══════════════════════════════════════════════════════════════ -->
+<section id="seccion-1">
+  <div class="hero-decor"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow"><span></span>Sistemas de Control — Introducción</div>
+    <h1 class="hero-title">Diagramas<br>de <em>flujo</em></h1>
+    <p class="hero-sub">Aprende a representar procesos paso a paso usando los símbolos correctos. Trabajaremos con sistemas de lazo abierto: sin rombos, sin decisiones, solo pasos en orden.</p>
+    <div class="hero-cards">
+      <a href="#seccion-2" class="hero-card">
+        <div class="hero-card-num">01</div>
+        <div class="hero-card-title">Simbología</div>
+        <div class="hero-card-desc">Los 5 símbolos que necesitas conocer</div>
+      </a>
+      <a href="#seccion-3" class="hero-card">
+        <div class="hero-card-num">02</div>
+        <div class="hero-card-title">Lazo abierto</div>
+        <div class="hero-card-desc">Qué es y cómo identificarlo</div>
+      </a>
+      <a href="#seccion-4" class="hero-card">
+        <div class="hero-card-num">03</div>
+        <div class="hero-card-title">Ejemplos</div>
+        <div class="hero-card-desc">Tostadora, semáforo y lavadora</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SECCIÓN 2 — SIMBOLOGÍA
+═══════════════════════════════════════════════════════════════ -->
+<section id="seccion-2" class="section">
+  <div class="section-header fade-up">
+    <div class="section-tag" style="color:var(--teal)"><div class="dot" style="background:var(--teal)"></div>Módulo 1</div>
+    <h2 class="section-title">Simbología<br>básica</h2>
+    <p class="section-desc">Cada figura tiene un significado preciso. Haz clic en cualquier símbolo para ver su descripción completa, forma y un ejemplo de uso.</p>
+  </div>
+
+  <div class="sym-grid fade-up">
+
+    <div class="sym-card" onclick="openModal('oval')" tabindex="0" role="button" aria-label="Ver símbolo Inicio/Fin">
+      <div class="sym-icon-wrap" style="background:var(--teal-l)">
+        <svg width="56" height="34" viewBox="0 0 56 34"><ellipse cx="28" cy="17" rx="26" ry="15" fill="var(--teal-l)" stroke="var(--teal)" stroke-width="1.8"/><text x="28" y="21" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="10" fill="var(--teal)">INICIO</text></svg>
+      </div>
+      <div class="sym-info">
+        <div class="sym-name">Inicio / Fin</div>
+        <div class="sym-brief">Marca el comienzo o el final del proceso</div>
+        <div class="sym-badge" style="background:var(--teal-l);color:var(--teal)">ÓVALO</div>
+      </div>
+      <div class="sym-more">›</div>
+    </div>
+
+    <div class="sym-card" onclick="openModal('rect')" tabindex="0" role="button" aria-label="Ver símbolo Proceso">
+      <div class="sym-icon-wrap" style="background:var(--purple-l)">
+        <svg width="56" height="36" viewBox="0 0 56 36"><rect x="4" y="5" width="48" height="26" rx="3" fill="var(--purple-l)" stroke="var(--purple)" stroke-width="1.8"/><text x="28" y="21" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="10" fill="var(--purple)">Proceso</text></svg>
+      </div>
+      <div class="sym-info">
+        <div class="sym-name">Proceso</div>
+        <div class="sym-brief">Una acción o paso que realiza el sistema</div>
+        <div class="sym-badge" style="background:var(--purple-l);color:var(--purple)">RECTÁNGULO</div>
+      </div>
+      <div class="sym-more">›</div>
+    </div>
+
+    <div class="sym-card" onclick="openModal('parallelogram')" tabindex="0" role="button" aria-label="Ver símbolo Entrada/Salida">
+      <div class="sym-icon-wrap" style="background:var(--blue-l)">
+        <svg width="58" height="36" viewBox="0 0 58 36"><polygon points="12,28 54,28 46,8 4,8" fill="var(--blue-l)" stroke="var(--blue)" stroke-width="1.8"/><text x="29" y="22" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="10" fill="var(--blue)">E / S</text></svg>
+      </div>
+      <div class="sym-info">
+        <div class="sym-name">Entrada / Salida</div>
+        <div class="sym-brief">Datos que ingresan o salen del sistema</div>
+        <div class="sym-badge" style="background:var(--blue-l);color:var(--blue)">PARALELOGRAMO</div>
+      </div>
+      <div class="sym-more">›</div>
+    </div>
+
+    <div class="sym-card" onclick="openModal('diamond')" tabindex="0" role="button" aria-label="Ver símbolo Decisión">
+      <div class="sym-icon-wrap" style="background:var(--coral-l)">
+        <svg width="56" height="40" viewBox="0 0 56 40"><polygon points="28,2 54,20 28,38 2,20" fill="var(--coral-l)" stroke="var(--coral)" stroke-width="1.8"/><text x="28" y="24" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="9" fill="var(--coral)">¿Sí/No?</text></svg>
+      </div>
+      <div class="sym-info">
+        <div class="sym-name">Decisión</div>
+        <div class="sym-brief">Pregunta con dos posibles respuestas: Sí o No</div>
+        <div class="sym-badge" style="background:var(--coral-l);color:var(--coral)">ROMBO</div>
+      </div>
+      <div class="sym-more">›</div>
+    </div>
+
+    <div class="sym-card" onclick="openModal('circle')" tabindex="0" role="button" aria-label="Ver símbolo Conector">
+      <div class="sym-icon-wrap" style="background:var(--amber-l)">
+        <svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="var(--amber-l)" stroke="var(--amber)" stroke-width="1.8"/><text x="20" y="25" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="800" font-size="14" fill="var(--amber)">A</text></svg>
+      </div>
+      <div class="sym-info">
+        <div class="sym-name">Conector</div>
+        <div class="sym-brief">Une partes del diagrama cuando no caben en la misma página</div>
+        <div class="sym-badge" style="background:var(--amber-l);color:var(--amber)">CÍRCULO</div>
+      </div>
+      <div class="sym-more">›</div>
+    </div>
+
+    <div class="sym-card" onclick="openModal('arrow')" tabindex="0" role="button" aria-label="Ver símbolo Línea de flujo">
+      <div class="sym-icon-wrap" style="background:var(--green-l)">
+        <svg width="56" height="20" viewBox="0 0 56 20"><line x1="4" y1="10" x2="42" y2="10" stroke="var(--green)" stroke-width="2.2" stroke-linecap="round"/><polygon points="52,10 40,5 40,15" fill="var(--green)"/></svg>
+      </div>
+      <div class="sym-info">
+        <div class="sym-name">Línea de flujo</div>
+        <div class="sym-brief">Flecha que indica la dirección y el orden de los pasos</div>
+        <div class="sym-badge" style="background:var(--green-l);color:var(--green)">FLECHA</div>
+      </div>
+      <div class="sym-more">›</div>
+    </div>
+
+  </div>
+
+  <div class="rule-banner fade-up" style="margin-top:32px">
+    <div class="rule-icon">💡</div>
+    <div>
+      <div class="rule-title">Regla de oro</div>
+      <div class="rule-text">Todo diagrama de flujo <strong>comienza y termina con un óvalo</strong>. Las flechas siempre indican hacia dónde va el proceso. En lazo abierto solo usaremos: óvalo, rectángulo y flechas.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SECCIÓN 3 — LAZO ABIERTO
+═══════════════════════════════════════════════════════════════ -->
+<section id="seccion-3" class="section">
+  <div class="section-header fade-up">
+    <div class="section-tag" style="color:var(--amber)"><div class="dot" style="background:var(--amber)"></div>Módulo 2</div>
+    <h2 class="section-title">Sistema de<br>lazo abierto</h2>
+    <p class="section-desc">Un sistema de lazo abierto ejecuta sus pasos en orden fijo, sin verificar si el resultado fue correcto. No hay retroalimentación.</p>
+  </div>
+
+  <div class="concept-block fade-up">
+    <div class="concept-card">
+      <div class="concept-label">Definición</div>
+      <h3>¿Qué es?</h3>
+      <p>Es un sistema en el que <strong>la salida no influye en la entrada</strong>. El controlador ejecuta cada paso según valores fijos (tiempo, temperatura, programa) sin importar si el resultado final fue correcto.</p>
+    </div>
+    <div class="concept-card">
+      <div class="concept-label">Característica clave</div>
+      <h3>Sin sensor</h3>
+      <p>No hay ningún sensor que mida el resultado y lo compare con lo esperado. El proceso se ejecuta de principio a fin siempre igual, independientemente de lo que ocurra.</p>
+    </div>
+  </div>
+
+  <div class="schema-wrap fade-up">
+    <div class="schema-label">Esquema de bloques — Lazo abierto</div>
+    <div class="schema-boxes">
+      <div class="schema-box" style="background:var(--gray-l);border-color:var(--border);color:var(--dark)" onclick="openModal('schema-entrada')">Entrada</div>
+      <div class="schema-arrow">→</div>
+      <div class="schema-box" style="background:var(--blue-l);border-color:var(--blue);color:var(--blue)" onclick="openModal('schema-controlador')">Controlador</div>
+      <div class="schema-arrow">→</div>
+      <div class="schema-box" style="background:var(--purple-l);border-color:var(--purple);color:var(--purple)" onclick="openModal('schema-proceso')">Proceso</div>
+      <div class="schema-arrow">→</div>
+      <div class="schema-box" style="background:var(--gray-l);border-color:var(--border);color:var(--dark)" onclick="openModal('schema-salida')">Salida</div>
+    </div>
+    <div class="schema-note">Sin retroalimentación: la salida no regresa al inicio del sistema</div>
+  </div>
+
+  <div class="concept-card fade-up" style="border-left: 3px solid var(--amber-m);">
+    <div class="concept-label">Ejemplos cotidianos</div>
+    <h3>¿Dónde lo vemos?</h3>
+    <p>La <strong>tostadora</strong> calienta durante un tiempo fijo sin saber si el pan quedó bien. El <strong>semáforo</strong> cambia de luz según tiempos predefinidos sin importar si hay autos. La <strong>lavadora</strong> lava por un tiempo fijo sin saber si la ropa quedó limpia.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SECCIÓN 4 — EJEMPLOS
+═══════════════════════════════════════════════════════════════ -->
+<section id="seccion-4" class="section">
+  <div class="section-header fade-up">
+    <div class="section-tag" style="color:var(--blue)"><div class="dot" style="background:var(--blue)"></div>Módulo 2 — Ejemplos</div>
+    <h2 class="section-title">Diagramas de<br>lazo abierto</h2>
+    <p class="section-desc">Tres ejemplos completos. Haz clic en cada paso del diagrama para ver a qué símbolo corresponde y por qué está ahí.</p>
+  </div>
+
+  <div class="examples-tabs fade-up">
+    <button class="ex-tab active" onclick="showEx('tostadora',this)">🍞 Tostadora</button>
+    <button class="ex-tab" onclick="showEx('semaforo',this)">🚦 Semáforo</button>
+    <button class="ex-tab" onclick="showEx('lavadora',this)">🫧 Lavadora</button>
+  </div>
+
+  <!-- TOSTADORA -->
+  <div class="example-panel active fade-up" id="ex-tostadora">
+    <div class="flow-container">
+      <div class="flow-title">Tostadora — diagrama de flujo (lazo abierto)</div>
+      <div class="f-oval" style="background:var(--teal-l);border-color:var(--teal);color:var(--teal)" onclick="openModal('node-inicio')">INICIO</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--amber-l);border-color:var(--amber);color:var(--amber)" onclick="openModal('node-proceso')">Insertar pan en la ranura</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--amber-l);border-color:var(--amber);color:var(--amber)" onclick="openModal('node-proceso')">Girar perilla de nivel de tostado</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--amber-l);border-color:var(--amber);color:var(--amber)" onclick="openModal('node-proceso')">Resistencia eléctrica calienta el pan</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--amber-l);border-color:var(--amber);color:var(--amber)" onclick="openModal('node-proceso')">Temporizador agota el tiempo fijado</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--amber-l);border-color:var(--amber);color:var(--amber)" onclick="openModal('node-proceso')">Palanca sube y expulsa el pan</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-oval" style="background:var(--teal-l);border-color:var(--teal);color:var(--teal)" onclick="openModal('node-fin')">FIN</div>
+    </div>
+    <div class="side-panel">
+      <div class="info-card">
+        <div class="info-tag" style="background:var(--amber-l);color:var(--amber)">LAZO ABIERTO</div>
+        <div class="info-card-title">¿Por qué es lazo abierto?</div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.6">La tostadora aplica calor durante el tiempo que marcaste en la perilla. No sabe si el pan quedó crudo o quemado. Siempre ejecuta los mismos pasos.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">Pasos del proceso</div>
+        <ul class="step-list">
+          <li><div class="step-num">1</div>El usuario inserta el pan</li>
+          <li><div class="step-num">2</div>Selecciona el nivel de tostado</li>
+          <li><div class="step-num">3</div>La resistencia calienta automáticamente</li>
+          <li><div class="step-num">4</div>El temporizador controla el tiempo</li>
+          <li><div class="step-num">5</div>La palanca expulsa el pan al terminar</li>
+        </ul>
+      </div>
+      <div class="info-card" style="background:var(--coral-l);border-color:var(--coral-m)">
+        <div class="info-card-title" style="color:var(--coral)">Nota importante</div>
+        <p style="font-size:12.5px;color:var(--coral);line-height:1.6">No hay ningún sensor que verifique si el pan quedó bien tostado. Por eso es lazo abierto.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEMÁFORO -->
+  <div class="example-panel" id="ex-semaforo">
+    <div class="flow-container">
+      <div class="flow-title">Semáforo — diagrama de flujo (lazo abierto)</div>
+      <div class="f-oval" style="background:var(--teal-l);border-color:var(--teal);color:var(--teal)" onclick="openModal('node-inicio')">INICIO</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--green-l);border-color:var(--green);color:var(--green)" onclick="openModal('node-proceso')">Encender luz VERDE</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--green-l);border-color:var(--green);color:var(--green)" onclick="openModal('node-proceso')">Esperar 30 segundos</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--amber-l);border-color:var(--amber);color:var(--amber)" onclick="openModal('node-proceso')">Encender luz AMARILLA</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--amber-l);border-color:var(--amber);color:var(--amber)" onclick="openModal('node-proceso')">Esperar 5 segundos</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--red-l);border-color:var(--red);color:var(--red)" onclick="openModal('node-proceso')">Encender luz ROJA</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--red-l);border-color:var(--red);color:var(--red)" onclick="openModal('node-proceso')">Esperar 25 segundos</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-oval" style="background:var(--teal-l);border-color:var(--teal);color:var(--teal)" onclick="openModal('node-fin')">FIN del ciclo</div>
+    </div>
+    <div class="side-panel">
+      <div class="info-card">
+        <div class="info-tag" style="background:var(--green-l);color:var(--green)">LAZO ABIERTO</div>
+        <div class="info-card-title">¿Por qué es lazo abierto?</div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.6">El semáforo cambia de color según tiempos fijos programados. No detecta si hay autos esperando o si la calle está vacía.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">Tiempos del ciclo</div>
+        <ul class="step-list">
+          <li><div class="step-num" style="background:var(--green)">🟢</div>Verde: 30 segundos</li>
+          <li><div class="step-num" style="background:var(--amber)">🟡</div>Amarillo: 5 segundos</li>
+          <li><div class="step-num" style="background:var(--red)">🔴</div>Rojo: 25 segundos</li>
+        </ul>
+      </div>
+      <div class="info-card" style="background:var(--coral-l);border-color:var(--coral-m)">
+        <div class="info-card-title" style="color:var(--coral)">Nota importante</div>
+        <p style="font-size:12.5px;color:var(--coral);line-height:1.6">Un semáforo inteligente con sensores de tráfico sería lazo <strong>cerrado</strong>. Ese lo veremos en el siguiente módulo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAVADORA -->
+  <div class="example-panel" id="ex-lavadora">
+    <div class="flow-container">
+      <div class="flow-title">Lavadora — diagrama de flujo (lazo abierto)</div>
+      <div class="f-oval" style="background:var(--teal-l);border-color:var(--teal);color:var(--teal)" onclick="openModal('node-inicio')">INICIO</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--blue-l);border-color:var(--blue);color:var(--blue)" onclick="openModal('node-proceso')">Seleccionar programa de lavado</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--blue-l);border-color:var(--blue);color:var(--blue)" onclick="openModal('node-proceso')">Llenar el tambor con agua</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--blue-l);border-color:var(--blue);color:var(--blue)" onclick="openModal('node-proceso')">Agregar detergente automáticamente</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--blue-l);border-color:var(--blue);color:var(--blue)" onclick="openModal('node-proceso')">Agitar la ropa — 12 minutos</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--blue-l);border-color:var(--blue);color:var(--blue)" onclick="openModal('node-proceso')">Drenar el agua sucia</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--blue-l);border-color:var(--blue);color:var(--blue)" onclick="openModal('node-proceso')">Enjuagar con agua limpia</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-rect" style="background:var(--blue-l);border-color:var(--blue);color:var(--blue)" onclick="openModal('node-proceso')">Centrifugar para escurrir — 5 min</div>
+      <div class="f-arrow"><svg width="2" height="28"><line x1="1" y1="0" x2="1" y2="20" stroke="#888" stroke-width="1.5"/><polygon points="1,28 -4,18 6,18" fill="#888"/></svg></div>
+      <div class="f-oval" style="background:var(--teal-l);border-color:var(--teal);color:var(--teal)" onclick="openModal('node-fin')">FIN</div>
+    </div>
+    <div class="side-panel">
+      <div class="info-card">
+        <div class="info-tag" style="background:var(--blue-l);color:var(--blue)">LAZO ABIERTO</div>
+        <div class="info-card-title">¿Por qué es lazo abierto?</div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.6">La lavadora básica ejecuta cada etapa durante un tiempo fijo. No tiene sensor para detectar si la ropa quedó limpia o sucia.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">Etapas del ciclo</div>
+        <ul class="step-list">
+          <li><div class="step-num">1</div>Programa seleccionado</li>
+          <li><div class="step-num">2</div>Llenado de agua</li>
+          <li><div class="step-num">3</div>Detergente agregado</li>
+          <li><div class="step-num">4</div>Agitación — 12 min</li>
+          <li><div class="step-num">5</div>Drenado y enjuague</li>
+          <li><div class="step-num">6</div>Centrifugado — 5 min</li>
+        </ul>
+      </div>
+      <div class="info-card" style="background:var(--coral-l);border-color:var(--coral-m)">
+        <div class="info-card-title" style="color:var(--coral)">Nota importante</div>
+        <p style="font-size:12.5px;color:var(--coral);line-height:1.6">No hay sensor de suciedad. Los tiempos son siempre los mismos, independientemente de qué tan sucia esté la ropa.</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ── FOOTER ──────────────────────────────────────────────────── -->
+<footer>
+  <div>
+    <div class="footer-brand">Tecnologia del control / 3° DYCP</div>
+  </div>
+  <div class="footer-text">Podés hacer click en cualquier elemento del diagrama para aclarar dudas :) </div>
+</footer>
+
+<!-- ══════════════════════════════════════════════════════════════
+     MODAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="closeModalOutside(event)">
+  <div class="modal" role="dialog" aria-modal="true">
+    <button class="modal-close" onclick="closeModal()" aria-label="Cerrar">✕</button>
+    <div class="modal-icon" id="m-icon"></div>
+    <div class="modal-tag" id="m-tag"></div>
+    <div class="modal-title" id="m-title"></div>
+    <div class="modal-desc" id="m-desc"></div>
+    <div class="modal-shape-label">Forma / símbolo</div>
+    <div class="modal-shape-box" id="m-shape"></div>
+    <div class="modal-example" id="m-example"></div>
+  </div>
+</div>
+
+<script>
+// ── Modal data ─────────────────────────────────────────────────
+const modals = {
+  oval: {
+    icon: `<svg width="56" height="34" viewBox="0 0 56 34"><ellipse cx="28" cy="17" rx="26" ry="15" fill="var(--teal-l)" stroke="var(--teal)" stroke-width="2"/></svg>`,
+    iconBg: 'var(--teal-l)', tag: 'SÍMBOLO', tagColor: 'var(--teal)', tagBg: 'var(--teal-l)',
+    title: 'Inicio / Fin',
+    desc: 'El óvalo (o rectángulo con esquinas redondeadas) indica el punto de inicio o de fin de un diagrama de flujo. Todo proceso tiene exactamente un inicio y al menos un fin. Sin este símbolo el diagrama estaría incompleto.',
+    shape: `<svg width="120" height="50" viewBox="0 0 120 50"><ellipse cx="60" cy="25" rx="54" ry="20" fill="var(--teal-l)" stroke="var(--teal)" stroke-width="1.8"/><text x="60" y="29" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="12" fill="var(--teal)">INICIO / FIN</text></svg>`,
+    example: `<strong>Ejemplo:</strong> En la tostadora, el óvalo de <em>INICIO</em> representa cuando el usuario conecta el aparato. El óvalo de <em>FIN</em> representa cuando el pan sale tostado.`,
+    exBg: 'var(--teal-l)', exColor: 'var(--teal)'
+  },
+  rect: {
+    icon: `<svg width="56" height="36" viewBox="0 0 56 36"><rect x="4" y="5" width="48" height="26" rx="3" fill="var(--purple-l)" stroke="var(--purple)" stroke-width="2"/></svg>`,
+    iconBg: 'var(--purple-l)', tag: 'SÍMBOLO', tagColor: 'var(--purple)', tagBg: 'var(--purple-l)',
+    title: 'Proceso',
+    desc: 'El rectángulo representa una acción, operación o tarea que realiza el sistema. Es el símbolo más común en los diagramas de flujo. Cada paso del proceso va dentro de un rectángulo.',
+    shape: `<svg width="160" height="44" viewBox="0 0 160 44"><rect x="4" y="4" width="152" height="36" rx="4" fill="var(--purple-l)" stroke="var(--purple)" stroke-width="1.8"/><text x="80" y="26" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="12" fill="var(--purple)">Acción / Paso</text></svg>`,
+    example: `<strong>Ejemplo:</strong> "Resistencia eléctrica calienta el pan", "Agitar la ropa 12 minutos", "Encender luz VERDE" — todos son procesos y van en rectángulos.`,
+    exBg: 'var(--purple-l)', exColor: 'var(--purple)'
+  },
+  parallelogram: {
+    icon: `<svg width="58" height="36" viewBox="0 0 58 36"><polygon points="12,28 54,28 46,8 4,8" fill="var(--blue-l)" stroke="var(--blue)" stroke-width="2"/></svg>`,
+    iconBg: 'var(--blue-l)', tag: 'SÍMBOLO', tagColor: 'var(--blue)', tagBg: 'var(--blue-l)',
+    title: 'Entrada / Salida',
+    desc: 'El paralelogramo representa datos que ingresan al sistema (entrada) o que produce el sistema (salida). Se usa cuando hay información que el usuario introduce o que el sistema entrega.',
+    shape: `<svg width="160" height="48" viewBox="0 0 160 48"><polygon points="22,40 154,40 138,8 6,8" fill="var(--blue-l)" stroke="var(--blue)" stroke-width="1.8"/><text x="80" y="28" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="12" fill="var(--blue)">Dato / Resultado</text></svg>`,
+    example: `<strong>Ejemplo:</strong> "Temperatura seleccionada por el usuario" es una entrada. "Pan tostado listo" es una salida. Ambas van en paralelogramos.`,
+    exBg: 'var(--blue-l)', exColor: 'var(--blue)'
+  },
+  diamond: {
+    icon: `<svg width="56" height="40" viewBox="0 0 56 40"><polygon points="28,2 54,20 28,38 2,20" fill="var(--coral-l)" stroke="var(--coral)" stroke-width="2"/></svg>`,
+    iconBg: 'var(--coral-l)', tag: 'SÍMBOLO', tagColor: 'var(--coral)', tagBg: 'var(--coral-l)',
+    title: 'Decisión',
+    desc: 'El rombo representa una pregunta o condición con dos salidas posibles: Sí o No. Lo usaremos en módulos avanzados (lazo cerrado). Por ahora, en lazo abierto, no lo necesitamos.',
+    shape: `<svg width="160" height="60" viewBox="0 0 160 60"><polygon points="80,4 154,30 80,56 6,30" fill="var(--coral-l)" stroke="var(--coral)" stroke-width="1.8"/><text x="80" y="34" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="11" fill="var(--coral)">¿Condición?</text></svg>`,
+    example: `<strong>Módulo avanzado:</strong> "¿La temperatura es la correcta?" → Sí: apagar compresor / No: seguir enfriando. Este símbolo lo veremos cuando estudiemos lazo cerrado.`,
+    exBg: 'var(--coral-l)', exColor: 'var(--coral)'
+  },
+  circle: {
+    icon: `<svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="var(--amber-l)" stroke="var(--amber)" stroke-width="2"/><text x="20" y="25" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="800" font-size="14" fill="var(--amber)">A</text></svg>`,
+    iconBg: 'var(--amber-l)', tag: 'SÍMBOLO', tagColor: 'var(--amber)', tagBg: 'var(--amber-l)',
+    title: 'Conector',
+    desc: 'El círculo pequeño con una letra sirve para conectar partes de un diagrama que están en páginas distintas o en partes separadas de la hoja. El mismo número/letra en dos círculos indica que el flujo continúa de uno al otro.',
+    shape: `<svg width="80" height="50" viewBox="0 0 80 50"><circle cx="40" cy="25" r="20" fill="var(--amber-l)" stroke="var(--amber)" stroke-width="1.8"/><text x="40" y="30" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="800" font-size="16" fill="var(--amber)">A</text></svg>`,
+    example: `<strong>Ejemplo:</strong> Si el diagrama es muy largo y continúa en otra hoja, se pone un círculo con la letra "A" al final de la primera parte y otro círculo "A" al inicio de la segunda parte.`,
+    exBg: 'var(--amber-l)', exColor: 'var(--amber)'
+  },
+  arrow: {
+    icon: `<svg width="56" height="20" viewBox="0 0 56 20"><line x1="4" y1="10" x2="42" y2="10" stroke="var(--green)" stroke-width="2.5"/><polygon points="52,10 40,5 40,15" fill="var(--green)"/></svg>`,
+    iconBg: 'var(--green-l)', tag: 'SÍMBOLO', tagColor: 'var(--green)', tagBg: 'var(--green-l)',
+    title: 'Línea de flujo',
+    desc: 'La flecha indica la dirección del proceso: hacia dónde va el flujo de un paso al siguiente. Siempre conecta dos símbolos y muestra el orden en que ocurren los pasos.',
+    shape: `<svg width="160" height="30" viewBox="0 0 160 30"><line x1="8" y1="15" x2="136" y2="15" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"/><polygon points="152,15 136,8 136,22" fill="var(--green)"/></svg>`,
+    example: `<strong>Ejemplo:</strong> La flecha que une "Insertar pan" con "Girar perilla" indica que primero se hace lo primero y luego lo segundo. Sin flechas, no sabríamos el orden.`,
+    exBg: 'var(--green-l)', exColor: 'var(--green)'
+  },
+  'schema-entrada': {
+    icon: `<svg width="48" height="30" viewBox="0 0 48 30"><rect x="2" y="2" width="44" height="26" rx="4" fill="var(--gray-l)" stroke="var(--border)" stroke-width="1.8"/><text x="24" y="19" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="9" fill="var(--dark)">Entrada</text></svg>`,
+    iconBg: 'var(--gray-l)', tag: 'BLOQUE', tagColor: 'var(--gray)', tagBg: 'var(--gray-l)',
+    title: 'Entrada',
+    desc: 'Es la señal o dato que el operador introduce al sistema para que comience a funcionar. En lazo abierto, esta entrada es un valor fijo que el usuario establece manualmente.',
+    shape: `<svg width="160" height="44" viewBox="0 0 160 44"><rect x="4" y="4" width="152" height="36" rx="6" fill="var(--gray-l)" stroke="var(--border)" stroke-width="1.8"/><text x="80" y="26" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="12" fill="var(--dark)">Entrada</text></svg>`,
+    example: `<strong>Ejemplos:</strong> En la tostadora → nivel de tostado elegido. En el semáforo → tiempos programados. En la lavadora → programa seleccionado.`,
+    exBg: 'var(--gray-l)', exColor: 'var(--dark)'
+  },
+  'schema-controlador': {
+    icon: `<svg width="48" height="30" viewBox="0 0 48 30"><rect x="2" y="2" width="44" height="26" rx="4" fill="var(--blue-l)" stroke="var(--blue)" stroke-width="1.8"/><text x="24" y="19" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="8" fill="var(--blue)">Control</text></svg>`,
+    iconBg: 'var(--blue-l)', tag: 'BLOQUE', tagColor: 'var(--blue)', tagBg: 'var(--blue-l)',
+    title: 'Controlador',
+    desc: 'Es el componente que recibe la entrada y determina qué acción tomar. En lazo abierto, el controlador simplemente ejecuta la acción programada sin recibir ninguna información del resultado.',
+    shape: `<svg width="160" height="44" viewBox="0 0 160 44"><rect x="4" y="4" width="152" height="36" rx="6" fill="var(--blue-l)" stroke="var(--blue)" stroke-width="1.8"/><text x="80" y="26" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="12" fill="var(--blue)">Controlador</text></svg>`,
+    example: `<strong>Ejemplos:</strong> En la tostadora → el temporizador y la resistencia. En el semáforo → el temporizador interno. En la lavadora → el programador de ciclos.`,
+    exBg: 'var(--blue-l)', exColor: 'var(--blue)'
+  },
+  'schema-proceso': {
+    icon: `<svg width="48" height="30" viewBox="0 0 48 30"><rect x="2" y="2" width="44" height="26" rx="4" fill="var(--purple-l)" stroke="var(--purple)" stroke-width="1.8"/><text x="24" y="19" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="8" fill="var(--purple)">Proceso</text></svg>`,
+    iconBg: 'var(--purple-l)', tag: 'BLOQUE', tagColor: 'var(--purple)', tagBg: 'var(--purple-l)',
+    title: 'Proceso / Planta',
+    desc: 'Es el sistema físico que realiza la acción: el aparato, la máquina o el mecanismo que transforma la entrada en la salida. También llamado "planta" en ingeniería de control.',
+    shape: `<svg width="160" height="44" viewBox="0 0 160 44"><rect x="4" y="4" width="152" height="36" rx="6" fill="var(--purple-l)" stroke="var(--purple)" stroke-width="1.8"/><text x="80" y="26" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="12" fill="var(--purple)">Proceso</text></svg>`,
+    example: `<strong>Ejemplos:</strong> En la tostadora → la resistencia calentando. En el semáforo → las luces encendiéndose. En la lavadora → el tambor girando.`,
+    exBg: 'var(--purple-l)', exColor: 'var(--purple)'
+  },
+  'schema-salida': {
+    icon: `<svg width="48" height="30" viewBox="0 0 48 30"><rect x="2" y="2" width="44" height="26" rx="4" fill="var(--gray-l)" stroke="var(--border)" stroke-width="1.8"/><text x="24" y="19" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="9" fill="var(--dark)">Salida</text></svg>`,
+    iconBg: 'var(--gray-l)', tag: 'BLOQUE', tagColor: 'var(--gray)', tagBg: 'var(--gray-l)',
+    title: 'Salida',
+    desc: 'Es el resultado final que produce el sistema. En lazo abierto, esta salida no regresa al inicio ni es verificada. El sistema no sabe si la salida fue correcta o no.',
+    shape: `<svg width="160" height="44" viewBox="0 0 160 44"><rect x="4" y="4" width="152" height="36" rx="6" fill="var(--gray-l)" stroke="var(--border)" stroke-width="1.8"/><text x="80" y="26" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="12" fill="var(--dark)">Salida</text></svg>`,
+    example: `<strong>Ejemplos:</strong> En la tostadora → pan tostado (bien o mal). En el semáforo → luz encendida. En la lavadora → ropa lavada (limpia o no).`,
+    exBg: 'var(--gray-l)', exColor: 'var(--dark)'
+  },
+  'node-inicio': {
+    icon: `<svg width="56" height="34" viewBox="0 0 56 34"><ellipse cx="28" cy="17" rx="26" ry="15" fill="var(--teal-l)" stroke="var(--teal)" stroke-width="2"/><text x="28" y="21" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="10" fill="var(--teal)">INICIO</text></svg>`,
+    iconBg: 'var(--teal-l)', tag: 'SÍMBOLO ESPECIAL', tagColor: 'var(--teal)', tagBg: 'var(--teal-l)',
+    title: 'Óvalo de inicio',
+    desc: 'Este símbolo indica dónde comienza el proceso. Todo diagrama de flujo debe tener exactamente un óvalo de INICIO. Sin él, no sabríamos por dónde empezar a leer el diagrama.',
+    shape: `<svg width="140" height="48" viewBox="0 0 140 48"><ellipse cx="70" cy="24" rx="64" ry="20" fill="var(--teal-l)" stroke="var(--teal)" stroke-width="1.8"/><text x="70" y="28" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="13" fill="var(--teal)">INICIO</text></svg>`,
+    example: `<strong>Regla:</strong> El óvalo de INICIO siempre está arriba del diagrama. De él sale una flecha que apunta hacia el primer paso del proceso.`,
+    exBg: 'var(--teal-l)', exColor: 'var(--teal)'
+  },
+  'node-fin': {
+    icon: `<svg width="56" height="34" viewBox="0 0 56 34"><ellipse cx="28" cy="17" rx="26" ry="15" fill="var(--teal-l)" stroke="var(--teal)" stroke-width="2"/><text x="28" y="21" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="10" fill="var(--teal)">FIN</text></svg>`,
+    iconBg: 'var(--teal-l)', tag: 'SÍMBOLO ESPECIAL', tagColor: 'var(--teal)', tagBg: 'var(--teal-l)',
+    title: 'Óvalo de fin',
+    desc: 'Este símbolo indica dónde termina el proceso. Puede haber más de un óvalo de FIN si el proceso tiene varias salidas posibles, pero en lazo abierto siempre hay uno solo al final.',
+    shape: `<svg width="140" height="48" viewBox="0 0 140 48"><ellipse cx="70" cy="24" rx="64" ry="20" fill="var(--teal-l)" stroke="var(--teal)" stroke-width="1.8"/><text x="70" y="28" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="13" fill="var(--teal)">FIN</text></svg>`,
+    example: `<strong>Regla:</strong> El óvalo de FIN siempre está al final del diagrama. Ninguna flecha sale de él. Solo llegan flechas al FIN, nunca salen.`,
+    exBg: 'var(--teal-l)', exColor: 'var(--teal)'
+  },
+  'node-proceso': {
+    icon: `<svg width="56" height="36" viewBox="0 0 56 36"><rect x="4" y="5" width="48" height="26" rx="3" fill="var(--purple-l)" stroke="var(--purple)" stroke-width="2"/></svg>`,
+    iconBg: 'var(--purple-l)', tag: 'SÍMBOLO', tagColor: 'var(--purple)', tagBg: 'var(--purple-l)',
+    title: 'Rectángulo de proceso',
+    desc: 'Cada rectángulo representa un paso o acción específica del sistema. Los pasos van en orden de arriba hacia abajo, conectados por flechas. En lazo abierto todos los pasos se ejecutan siempre, sin saltar ninguno.',
+    shape: `<svg width="200" height="44" viewBox="0 0 200 44"><rect x="4" y="4" width="192" height="36" rx="5" fill="var(--purple-l)" stroke="var(--purple)" stroke-width="1.8"/><text x="100" y="26" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="700" font-size="12" fill="var(--purple)">Nombre del paso</text></svg>`,
+    example: `<strong>Regla:</strong> Cada rectángulo contiene una sola acción, descrita con un verbo: "Calentar", "Girar", "Esperar", "Drenar". Si hay dos acciones distintas, usa dos rectángulos.`,
+    exBg: 'var(--purple-l)', exColor: 'var(--purple)'
+  }
+};
+
+function openModal(key) {
+  const d = modals[key]; if (!d) return;
+  document.getElementById('m-icon').innerHTML = d.icon;
+  document.getElementById('m-icon').style.background = d.iconBg;
+  const tag = document.getElementById('m-tag');
+  tag.textContent = d.tag; tag.style.color = d.tagColor; tag.style.background = d.tagBg;
+  tag.style.padding = '3px 10px'; tag.style.borderRadius = '20px';
+  tag.style.fontSize = '10px'; tag.style.fontWeight = '700'; tag.style.letterSpacing = '1.5px';
+  document.getElementById('m-title').textContent = d.title;
+  document.getElementById('m-desc').textContent = d.desc;
+  document.getElementById('m-shape').innerHTML = d.shape;
+  const ex = document.getElementById('m-example');
+  ex.innerHTML = d.example;
+  ex.style.background = d.exBg; ex.style.color = d.exColor;
+  document.getElementById('modal-backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modal-backdrop')) closeModal();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ── Tab switching ──────────────────────────────────────────────
+function showEx(id, btn) {
+  document.querySelectorAll('.example-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ex-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('ex-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── Scroll animations ──────────────────────────────────────────
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+// ── Nav active state ───────────────────────────────────────────
+const sections = ['seccion-2','seccion-3','seccion-4'];
+const navIds   = ['nav-1','nav-2','nav-3'];
+const sObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const i = sections.indexOf(e.target.id);
+      navIds.forEach((n,j) => document.getElementById(n).classList.toggle('active', j===i));
+    }
+  });
+}, { threshold: 0.4 });
+sections.forEach(id => { const el = document.getElementById(id); if(el) sObs.observe(el); });
+
+// keyboard support for sym-cards
+document.querySelectorAll('.sym-card').forEach(card => {
+  card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') card.click(); });
+});
+</script>
+</body>
+</html>

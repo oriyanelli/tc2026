@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistemas de Control — Ejemplos</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ab: #E85D20;
+    --ab-light: #FFF0E8;
+    --ab-mid: #FDDCC8;
+    --ab-dark: #7A2800;
+    --ce: #0B6E4F;
+    --ce-light: #E4F7EF;
+    --ce-mid: #A8E6CF;
+    --ce-dark: #053D2A;
+    --bg: #F7F4EE;
+    --ink: #1A1612;
+    --ink2: #5C5248;
+    --rule: #D9D3C8;
+    --white: #FFFFFF;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    background: var(--ink);
+    color: var(--white);
+    padding: 48px 40px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 200px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+  }
+  .header-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 12px;
+  }
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 5vw, 46px);
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 10px;
+  }
+  header p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.55);
+    max-width: 520px;
+    line-height: 1.6;
+  }
+  .header-badges {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .hbadge {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .hbadge.ab { background: var(--ab); color: #fff; }
+  .hbadge.ce { background: var(--ce); color: #fff; }
+  .hbadge-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.6); }
+
+  /* ─── NAV / TABS ─── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 40px;
+    display: flex;
+    gap: 0;
+  }
+  .nav-tab {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 16px 22px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--ink2);
+    border-bottom: 3px solid transparent;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  .nav-tab:hover { color: var(--ink); }
+  .nav-tab.active-ab { color: var(--ab); border-bottom-color: var(--ab); }
+  .nav-tab.active-ce { color: var(--ce); border-bottom-color: var(--ce); }
+  .nav-tab.active-all { color: var(--ink); border-bottom-color: var(--ink); }
+
+  /* ─── MAIN ─── */
+  main { padding: 40px; max-width: 1280px; margin: 0 auto; }
+
+  /* ─── SECTION BANNER ─── */
+  .section-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 24px 28px;
+    border-radius: var(--radius);
+    margin-bottom: 28px;
+  }
+  .banner-ab { background: var(--ab-light); border-left: 5px solid var(--ab); }
+  .banner-ce { background: var(--ce-light); border-left: 5px solid var(--ce); }
+  .banner-icon {
+    font-size: 32px;
+    line-height: 1;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .banner-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .banner-ab .banner-title { color: var(--ab-dark); }
+  .banner-ce .banner-title { color: var(--ce-dark); }
+  .banner-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink2);
+  }
+  .banner-key {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+  .banner-ab .banner-key { background: var(--ab-mid); color: var(--ab-dark); }
+  .banner-ce .banner-key { background: var(--ce-mid); color: var(--ce-dark); }
+
+  /* ─── GRID ─── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 52px;
+  }
+
+  /* ─── CARD ─── */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--rule);
+    padding: 20px;
+    position: relative;
+    transition: transform .15s, box-shadow .15s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: hidden;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.09);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .card-ab::before { background: linear-gradient(90deg, var(--ab), #F2A040); }
+  .card-ce::before { background: linear-gradient(90deg, var(--ce), #1DB97A); }
+
+  .card-code {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    border-radius: 6px;
+    display: inline-block;
+    width: fit-content;
+  }
+  .card-ab .card-code { background: var(--ab-light); color: var(--ab); }
+  .card-ce .card-code { background: var(--ce-light); color: var(--ce); }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--ink2);
+    line-height: 1.55;
+    flex: 1;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-top: 10px;
+    border-top: 1px solid var(--rule);
+    margin-top: 4px;
+  }
+  .card-tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 999px;
+  }
+  .card-ab .card-tag { background: var(--ab-light); color: var(--ab-dark); }
+  .card-ce .card-tag { background: var(--ce-light); color: var(--ce-dark); }
+
+  /* ─── SECTION HEADERS ─── */
+  .section-head {
+    display: none;
+  }
+  .section-head.visible { display: block; }
+
+  /* ─── SECTION SHOW/HIDE ─── */
+  .sec { display: none; }
+  .sec.visible { display: block; }
+
+  /* ─── COMBINED VIEW ─── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .two-col { grid-template-columns: 1fr; }
+    nav { padding: 0 20px; }
+    main { padding: 24px 20px; }
+    header { padding: 36px 20px 28px; }
+    .nav-tab { padding: 14px 14px; font-size: 12px; }
+  }
+
+  /* ─── COMPARISON TABLE ─── */
+  .comp-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--rule);
+    margin-bottom: 40px;
+    font-size: 14px;
+  }
+  .comp-table th {
+    padding: 14px 18px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    text-align: left;
+  }
+  .comp-table th:first-child { background: var(--ink); color: var(--white); }
+  .comp-table th.th-ab { background: var(--ab); color: var(--white); }
+  .comp-table th.th-ce { background: var(--ce); color: var(--white); }
+  .comp-table td {
+    padding: 12px 18px;
+    border-top: 1px solid var(--rule);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .comp-table tr:nth-child(even) td { background: #FAFAF8; }
+  .comp-table td:first-child { color: var(--ink2); font-weight: 500; font-size: 13px; }
+  .comp-table td.td-ab { color: var(--ab-dark); }
+  .comp-table td.td-ce { color: var(--ce-dark); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    text-align: center;
+    padding: 32px 40px;
+    font-size: 12px;
+    color: var(--ink2);
+    border-top: 1px solid var(--rule);
+    opacity: .6;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-label">Taller TC - 3ro DyCP</div>
+  <h1>Ejemplos de<br>Sistemas de Control</h1>
+</header>
+
+<nav>
+  <button class="nav-tab active-all" onclick="showTab('all', this)">Todos</button>
+  <button class="nav-tab" onclick="showTab('ab', this)">🔓 Lazo Abierto</button>
+  <button class="nav-tab" onclick="showTab('ce', this)">🔁 Lazo Cerrado</button>
+  <button class="nav-tab" onclick="showTab('comp', this)">⚖️ Comparación</button>
+</nav>
+
+<main>
+
+  <!-- ====== ALL VIEW ====== -->
+  <div id="sec-all" class="sec visible">
+    <div class="two-col">
+      <div>
+        <div class="section-banner banner-ab">
+          <div class="banner-icon">🔓</div>
+          <div>
+            <div class="banner-title">Lazo Abierto</div>
+            <div class="banner-desc">La salida <strong>no influye</strong> sobre la entrada. No hay sensor ni retroalimentación. El sistema ejecuta una acción fija sin verificar el resultado.</div>
+            <span class="banner-key">Sin sensor · Sin comparador · Sin retroalimentación</span>
+          </div>
+        </div>
+        <div class="grid" id="grid-ab-all"></div>
+      </div>
+      <div>
+        <div class="section-banner banner-ce">
+          <div class="banner-icon">🔁</div>
+          <div>
+            <div class="banner-title">Lazo Cerrado</div>
+            <div class="banner-desc">La salida <strong>sí influye</strong> sobre la entrada. El sistema mide la variable, la compara con la referencia y corrige automáticamente.
+            </div>
+                <br>
+            <span class="banner-key">Con sensor · Con comparador · Con retroalimentación</span>
+          </div>
+        </div>
+        <div class="grid" id="grid-ce-all"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== LAZO ABIERTO ====== -->
+  <div id="sec-ab" class="sec">
+    <div class="section-banner banner-ab">
+      <div class="banner-icon">🔓</div>
+      <div>
+        <div class="banner-title">Sistemas de Lazo Abierto</div>
+        <div class="banner-desc">La señal de salida <strong>no realimenta</strong> al controlador. El sistema actúa según una consigna fija (tiempo, posición, potencia) sin verificar si el resultado fue el esperado. En presencia de perturbaciones, el error no se corrige automáticamente.</div>
+        <span class="banner-key">Sin sensor · Sin comparador · Sin retroalimentación</span>
+      </div>
+    </div>
+    <div class="grid" id="grid-ab-solo"></div>
+  </div>
+
+  <!-- ====== LAZO CERRADO ====== -->
+  <div id="sec-ce" class="sec">
+    <div class="section-banner banner-ce">
+      <div class="banner-icon">🔁</div>
+      <div>
+        <div class="banner-title">Sistemas de Lazo Cerrado</div>
+        <div class="banner-desc">La señal de salida <strong>realimenta</strong> al controlador. El sensor capta la variable controlada, el comparador detecta el error respecto a la referencia y el controlador corrige la acción. Ante perturbaciones, el sistema se autoregula.</div>
+        <span class="banner-key">Con sensor · Con comparador · Con retroalimentación negativa</span>
+      </div>
+    </div>
+    <div class="grid" id="grid-ce-solo"></div>
+  </div>
+
+  <!-- ====== COMPARISON ====== -->
+  <div id="sec-comp" class="sec">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Característica</th>
+          <th class="th-ab">🔓 Lazo Abierto</th>
+          <th class="th-ce">🔁 Lazo Cerrado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>¿Hay sensor?</td><td class="td-ab">No</td><td class="td-ce">Sí — mide la variable de salida</td></tr>
+        <tr><td>¿Hay retroalimentación?</td><td class="td-ab">No</td><td class="td-ce">Sí — la salida vuelve al comparador</td></tr>
+        <tr><td>¿Hay comparador?</td><td class="td-ab">No</td><td class="td-ce">Sí — calcula la señal de error</td></tr>
+        <tr><td>¿Reacciona a perturbaciones?</td><td class="td-ab">No — el error persiste</td><td class="td-ce">Sí — se autoregula</td></tr>
+        <tr><td>Rombo de decisión en el diagrama</td><td class="td-ab">Generalmente no</td><td class="td-ce">Sí — obligatorio</td></tr>
+        <tr><td>Complejidad del sistema</td><td class="td-ab">Menor — más económico</td><td class="td-ce">Mayor — más preciso y robusto</td></tr>
+        <tr><td>Ejemplo cotidiano</td><td class="td-ab">Tostadora, semáforo fijo, microondas</td><td class="td-ce">Heladera, aire acondicionado, ABS</td></tr>
+      </tbody>
+    </table>
+ </div>
+</main>
+
+<footer>Sistemas de Control · 3° Año DyCP</footer>
+
+<script>
+const AB = [
+  { code:"LA-01", title:"Semáforo temporizado", desc:"Cambia de color según tiempos fijos, sin importar el flujo real de vehículos en cada calle.", tags:["tiempo fijo","sin sensor"] },
+  { code:"LA-02", title:"Tostadora de pan", desc:"El tiempo de tostado es fijo; no detecta si el pan ya está dorado o se quemó.", tags:["temporizador","sin sensor"] },
+  { code:"LA-03", title:"Secadora de ropa (ciclo fijo)", desc:"Gira durante un tiempo preestablecido sin medir la humedad residual de la ropa.", tags:["tiempo fijo","sin sensor"] },
+  { code:"LA-04", title:"Sistema de riego por temporizador", desc:"Riega a hora fija durante un tiempo determinado, sin medir la humedad del suelo.", tags:["temporizador","sin sensor"] },
+  { code:"LA-05", title:"Horno microondas (tiempo manual)", desc:"Calienta durante el tiempo que el usuario configura, sin sensor de temperatura interna.", tags:["tiempo fijo","sin sensor"] },
+  { code:"LA-06", title:"Amplificador de audio", desc:"Aplica la ganancia configurada sin verificar si el sonido llegó correctamente al ambiente.", tags:["potencia fija","sin retroalimentación"] },
+  { code:"LA-07", title:"Lavadora (ciclo básico)", desc:"Ejecuta la secuencia de lavado por tiempo fijo sin detectar el nivel de suciedad.", tags:["ciclo fijo","sin sensor"] },
+  { code:"LA-08", title:"Ventilador de techo (velocidad fija)", desc:"Gira a la velocidad seleccionada sin medir ni ajustar según la temperatura del ambiente.", tags:["velocidad fija","sin sensor"] },
+  { code:"LA-09", title:"Calefactor sin termostato", desc:"Genera calor de forma continua a potencia fija sin sensar la temperatura del cuarto.", tags:["potencia fija","sin sensor"] },
+  { code:"LA-10", title:"Llave de luz manual", desc:"El usuario enciende o apaga; no hay detección de luminosidad ni ajuste automático.", tags:["manual","sin sensor"] },
+  { code:"LA-11", title:"Bomba de agua por tiempo", desc:"Bombea durante X minutos sin detectar si el tanque ya alcanzó el nivel deseado.", tags:["temporizador","sin sensor"] },
+  { code:"LA-12", title:"Motor de portón sin fin de carrera", desc:"Abre o cierra durante un tiempo fijo sin detectar si llegó al tope mecánico.", tags:["tiempo fijo","sin sensor"] },
+  { code:"LA-13", title:"Exprimidor eléctrico", desc:"Gira a velocidad constante sin detectar si ya no queda jugo que extraer.", tags:["velocidad fija","sin sensor"] },
+  { code:"LA-14", title:"Carrusel de estacionamiento", desc:"Rota posiciones en forma secuencial sin verificar si hay vehículo en cada plataforma.", tags:["secuencial","sin sensor"] },
+  { code:"LA-15", title:"Temporizador de horno convencional", desc:"Apaga el horno al cumplirse el tiempo sin medir la temperatura real del alimento.", tags:["temporizador","sin sensor"] },
+  { code:"LA-16", title:"Persiana automática por horario", desc:"Sube y baja a horarios fijos sin medir la intensidad de luz solar exterior.", tags:["horario fijo","sin sensor"] },
+  { code:"LA-17", title:"Dispensador de jabón manual", desc:"Expulsa una dosis fija por presión, sin detectar si las manos recibieron suficiente.", tags:["dosis fija","sin sensor"] },
+  { code:"LA-18", title:"Robot cortadora sin sensor", desc:"Recorre un patrón fijo de trayectoria sin detectar zonas ya cortadas ni obstáculos.", tags:["trayectoria fija","sin sensor"] },
+  { code:"LA-19", title:"Alarma de despertador", desc:"Suena a la hora programada sin detectar si la persona ya está despierta.", tags:["horario fijo","sin sensor"] },
+  { code:"LA-20", title:"Cinta transportadora velocidad fija", desc:"Se mueve a velocidad constante sin ajustarse según la carga que está transportando.", tags:["velocidad fija","sin sensor"] },
+];
+
+const CE = [
+  { code:"LC-01", title:"Heladera doméstica", desc:"El termostato mide la temperatura interior y activa o detiene el compresor para mantenerla en el valor deseado.", tags:["termostato","realimentación negativa"] },
+  { code:"LC-02", title:"Aire acondicionado", desc:"Sensor de temperatura ambiente compara con la consigna del usuario y ajusta la refrigeración o el calor.", tags:["sensor de temp.","comparador"] },
+  { code:"LC-03", title:"Plancha con termostato", desc:"Un sensor bimetálico corta la corriente al alcanzar la temperatura deseada y la reestablece al enfriarse.", tags:["bimetálico","on/off"] },
+  { code:"LC-04", title:"Termotanque de agua caliente", desc:"El termostato mantiene el agua a temperatura constante activando el quemador o la resistencia.", tags:["termostato","sensor de temp."] },
+  { code:"LC-05", title:"Piloto automático de avión", desc:"Sensores de posición, altitud y velocidad comparan con la ruta programada y corrigen los controles.", tags:["múltiples sensores","PID"] },
+  { code:"LC-06", title:"Control de velocidad crucero", desc:"Sensor de velocidad compara con el set point y ajusta la mariposa del motor para mantener la velocidad.", tags:["sensor de vel.","comparador"] },
+  { code:"LC-07", title:"Riego con sensor de humedad", desc:"Mide la humedad del suelo y solo riega cuando cae por debajo del valor de referencia configurado.", tags:["higrómetro","realimentación"] },
+  { code:"LC-08", title:"Alumbrado público con fotocélula", desc:"Sensor de luz activa las luminarias al detectar oscuridad y las apaga con la luz del amanecer.", tags:["fotocélula","sensor de luz"] },
+  { code:"LC-09", title:"Calefacción central con termostato", desc:"El termostato ambiental mide la temperatura y activa o corta la caldera para mantener el setpoint.", tags:["termostato","on/off"] },
+  { code:"LC-10", title:"Tanque de agua con flotante", desc:"El flotante sube con el nivel y cierra mecánicamente la válvula de ingreso al alcanzar el máximo.", tags:["sensor mecánico","válvula"] },
+  { code:"LC-11", title:"Estabilizador de tensión", desc:"Mide la tensión de salida y la compara con 220 V, corrigiendo automáticamente si hay variaciones.", tags:["sensor de tensión","corrección"] },
+  { code:"LC-12", title:"Dirección asistida electrónica", desc:"Sensor de torque en el volante detecta el esfuerzo del conductor y asiste de forma proporcional.", tags:["sensor de torque","proporcional"] },
+  { code:"LC-13", title:"Incubadora de huevos", desc:"Sensor de temperatura activa resistencias calefactoras para mantener exactamente los 37 °C necesarios.", tags:["termopar","control preciso"] },
+  { code:"LC-14", title:"Drone con estabilizador de vuelo", desc:"Giroscopio y acelerómetro detectan inclinación y ajustan la velocidad de cada hélice en tiempo real.", tags:["giroscopio","tiempo real"] },
+  { code:"LC-15", title:"Bomba con presostato", desc:"El presostato mide la presión del sistema y activa la bomba cuando cae por debajo del valor mínimo.", tags:["presostato","on/off"] },
+  { code:"LC-16", title:"Lavadora con sensor de carga", desc:"Detecta el peso de la ropa y ajusta automáticamente la cantidad de agua y el tiempo de centrifugado.", tags:["sensor de peso","adaptativo"] },
+  { code:"LC-17", title:"Semáforo inteligente", desc:"Cámaras o sensores inductivos miden el flujo vehicular y ajustan los tiempos de cada fase en tiempo real.", tags:["sensor inductivo","adaptativo"] },
+  { code:"LC-18", title:"Horno industrial con control PID", desc:"Termocupla mide la temperatura real y el controlador PID ajusta la potencia del quemador continuamente.", tags:["termocupla","PID"] },
+  { code:"LC-19", title:"Sistema ABS de frenos", desc:"Sensores de velocidad en ruedas detectan bloqueo y pulsan el freno automáticamente para evitar derrape.", tags:["sensor de vel.","tiempo real"] },
+  { code:"LC-20", title:"Panel solar con seguidor solar", desc:"Sensores de luz detectan la posición del sol y orientan el panel para maximizar la captación de energía.", tags:["fotosensor","seguimiento"] },
+];
+
+function makeCard(item, type) {
+  const tags = item.tags.map(t => `<span class="card-tag">${t}</span>`).join('');
+  return `
+    <div class="card card-${type}">
+      <span class="card-code">${item.code}</span>
+      <div class="card-title">${item.title}</div>
+      <div class="card-desc">${item.desc}</div>
+      <div class="card-footer">${tags}</div>
+    </div>`;
+}
+
+function renderGrid(id, data, type) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = data.map(d => makeCard(d, type)).join('');
+}
+
+renderGrid('grid-ab-all', AB, 'ab');
+renderGrid('grid-ce-all', CE, 'ce');
+renderGrid('grid-ab-solo', AB, 'ab');
+renderGrid('grid-ce-solo', CE, 'ce');
+renderGrid('grid-ab-comp', AB, 'ab');
+renderGrid('grid-ce-comp', CE, 'ce');
+
+function showTab(id, btn) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('visible'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active-ab','active-ce','active-all','active-comp'));
+  document.getElementById('sec-' + id).classList.add('visible');
+  const cls = id === 'all' ? 'active-all' : id === 'ab' ? 'active-ab' : id === 'ce' ? 'active-ce' : 'active-all';
+  btn.classList.add(cls);
+}
+</script>
+</body>
+</html>
